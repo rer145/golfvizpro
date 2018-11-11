@@ -1,6 +1,6 @@
 //var canvas = d3.select('svg#plot');        
 var width = 650;
-var height = 300;
+var height = 350;
 
 var canvas = d3.select('#plot')
 				.append('svg')
@@ -137,8 +137,11 @@ async function main() {
     // shot dispersion
     var colors = d3.scaleOrdinal(d3.schemeCategory10)
                     .domain([0, d3.max(data, function(d) { return d.playerId; })]);
-    console.log(colors(data[0].playerId));
-    console.log(colors(data[5].playerId));
+    
+    var playerIds = d3.map(data, function(d) { return d.playerId; }).keys();
+    for (var i = 0; i < playerIds.length; i++) {
+        console.log(playerIds[i] + ' - ' + colors(playerIds[i]));
+    }
 
     var shot_line_gen = d3.line();
     var shot_lines = [];
@@ -168,7 +171,7 @@ async function main() {
             .attr('r', 2);
 
 
-    /*
+    ///*
     // legend
     var legendRectSize = 25;
     var legendSpacing = 5;
@@ -194,7 +197,7 @@ async function main() {
         .attr('x', legendRectSize + legendSpacing)
         .attr('y', legendRectSize - legendSpacing)
         .text(function(d) { return d; });
-    */
+    //*/
 }; 
 
 main();
