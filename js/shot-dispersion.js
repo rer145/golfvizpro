@@ -136,7 +136,7 @@ async function main() {
 
     // shot dispersion
     var colors = d3.scaleOrdinal(d3.schemeCategory10)
-                    .domain([0, d3.max(data, function(d) { return d.playerId; })]);
+                    .domain([d3.min(data, function(d) { return d.playerId; }), d3.max(data, function(d) { return d.playerId; })]);
     
     var playerIds = d3.map(data, function(d) { return d.playerId; }).keys();
     for (var i = 0; i < playerIds.length; i++) {
