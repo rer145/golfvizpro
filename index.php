@@ -15,11 +15,15 @@
 					<ol>
 						<li>
 							<time datetime="2010-11-10 00:00:00 UTC">Nov 10</time>
-							<a href="shot-dispersion.php">PGA Tour Shot Dispersion</a>
+							<a href="shot-dispersion.php"><s>Shot Dispersion</s> (incomplete)</a>
 						</li>
 						<li>
 							<time datetime="2010-11-11 00:00:00 UTC">Nov 11</time>
-							<a href="tournament-scoring.php">PGA Tour Tournament Scoring</a>
+							<a href="tournament-scoring.php">Tournament Scoring</a>
+						</li>
+						<li>
+							<time datetime="2010-11-12 00:00:00 UTC">Nov 12</time>
+							<a href="driving-stats.php">Driving Stats</a>
 						</li>
 					</ol>
 				</section>
