@@ -1,32 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        <meta name="author" content="Ron Richardson" />
-        <meta property="og:url" content="http://www.golfvizpro.com/tournament-scoring.html" />
-        <meta property="og:title" content="PGA Tour Tournament Scoring - GolfViz Pro" />
-        <meta property="og:type" content="website" />
-        <meta name="description" content="Visualizations of golf statistics and data" />
-
-        <title>PGA Tour Tournament Scoring - GolfViz Pro</title>
-
-        <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" /> -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700" />
-        <link href="css/main.css" rel="stylesheet" />
-        <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-      </head>
+      <?php include_once "inc/head.php"; ?>
+      <title>PGA Tour Tournament Scoring - GolfViz Pro</title>
+     </head>
       <body>
         <div class="container">
-          <header class="site-header">
-            <h1><a href="index.html">GolfViz Pro</a></h1>
-            <p>PGA Tour Tournament Scoring</p>
-          </header>
+          <?php include_once "inc/header.php"; ?>
+
+          <h2>PGA Tour Tournament Scoring</h2>
+
+          <section class="instructions">
+            <p>Select a tournament from the list below to see the distribution of scores for each round of the tournament. Excluded from the list are match play events and team events. Data is from the 2018 PGA Tour season.</p>
+          </section>
 
           <section class="viz">
             <p>
@@ -59,31 +45,10 @@
             </p>
           </section>
 
-          <footer class="site-footer">
-            <span itemscope itemtype="http://schema.org/Person">
-              <link itemprop="url" href="http://www.golfvizpro.com/">
-              <span itemprop="name">Ron Richardson</span>,
-              <span itemprop="jobTitle">Data Science Grad Student</span> at
-              <span itemprop="memberOf" itemscope itemtype="http://schema.org/Organization">
-                <a itemprop="url" href="https://www.mercyhurst.edu/">
-                  <span itemprop="name">Mercyhurst University</span>
-                </a>
-              </span>
-              <br />
-              <a itemprop="sameAs" href="https://github.com/rer145" title="GitHub">GitHub</a>
-              <a itemprop="sameAs" href="https://gist.github.com/rer145" title="GitHub Gists">GitHub Gists</a>
-              <a itemprop="sameAs" href="https://twitter.com/rer145" title="Twitter">Twitter</a>
-              <a itemprop="sameAs" href="https://www.linkedin.com/in/rer145/" title="Twitter">LinkedIn</a>
-            </span>
-          </footer>
+          <?php include_once "inc/footer.php"; ?>
         </div>        
         
-
-        <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
-        <!-- <script type="text/javascript" src="js/d3plus.js"></script> -->
-        <!-- <script type="text/javascript" src="js/d3.box.js"></script> -->
+        <?php include_once "inc/footer-js.php"; ?>
         <script type="text/javascript" src="js/tournament-scoring.js"></script>
     </body>
 </html>
