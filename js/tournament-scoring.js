@@ -7,10 +7,16 @@ var padding = 60;
 
 var box_width = 75;
 
+var global_max = Infinity;
+var global_min = -Infinity;
+
 var canvas = d3.select('#plot')
 				.append('svg')
 				.attr('width', width)
-				.attr('height', height);
+                .attr('height', height);
+                
+var x_scale;
+var y_scale;
 
 
 async function main() {
@@ -23,11 +29,79 @@ async function main() {
         round: parseInt(d['Round Number'], 10),
         score: parseInt(d['Round Score'], 10)
     }));
-    //console.log(csv);
 
-    var min = d3.min(csv, function(d) { return d.score; });
-    var max = d3.max(csv, function(d) { return d.score; });
+    global_min = d3.min(csv, function(d) { return d.score; });
+    global_max = d3.max(csv, function(d) { return d.score; });
+    
+    x_scale = d3.scaleLinear()
+                .domain([-0.5, 3.5])
+                .range([padding, width-padding]);
 
+    var rounds = [0,1,2,3];
+    var x_axis = d3.axisTop()
+        .scale(x_scale)
+        .tickValues(rounds)
+        .tickFormat(function(d,i) { return "Round " + (i+1).toString(); });
+
+    canvas.append("g")
+        .attr('class', 'x-axis')
+        .attr("transform", "translate(0, " + padding + ")")
+        .call(x_axis);
+
+    y_scale = d3.scaleLinear()
+                .domain([global_max, global_min])
+                .range([0 + padding, height - padding]);
+
+    var y_axis = d3.axisLeft()
+                    .scale(y_scale);
+
+    canvas.append("g")
+            .attr('class', 'y-axis')
+            .attr("transform", "translate(" + padding + ",0)")
+            .call(y_axis);
+
+    canvas.append('text')
+            .attr('x', -(height/2))
+            .attr('y', padding/2)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', 14)
+            .attr('transform', 'rotate(-90)')
+            .text('Round Score');
+    
+    var tournaments = [];
+    csv.forEach(function(x) {
+        if (!tournaments.includes(x.tournament)) {
+            tournaments.push(x.tournament);
+        }
+    });
+
+    var tourney_select = d3.select('span#tournament-list')
+        .append('select')
+        .attr('class', 'tournament-list')
+        .attr('id', 'tournaments')
+		.on('change', function() {
+            plotRounds(csv, this.value);
+        });
+        
+    tourney_select.selectAll('option')
+		.data(tournaments)
+		.enter()
+		.append('option')
+		.attr('value', function(d) { return d; })
+		.text(function(d) { return d; });
+	
+	d3.selectAll('select#tournaments')
+		.append('option')
+		.attr('value', '')
+		.text('-- Choose a Tournament --')
+		.attr('selected', 'yes');
+}; 
+
+function formatData(csv, tournament) {
+    var tourney_data = csv.filter(function(row) {
+        return row.tournament === tournament;
+    });
+    
     var data = [];
     data[0] = [];
     data[1] = [];
@@ -44,7 +118,7 @@ async function main() {
     data[2][1] = [];
     data[3][1] = [];
 
-    csv.forEach(function(x) {
+    tourney_data.forEach(function(x) {
         data[x.round-1][1].push(x.score);
     });
 
@@ -59,49 +133,33 @@ async function main() {
         data[i][2].push(d3.quantile(data[i][1], 0.5));
         data[i][2].push(d3.quantile(data[i][1], 0.75));
 
+        q1 = data[i][2][0] - 1.5 * (data[i][2][2] - data[i][2][0]);
+        q3 = data[i][2][0] + 1.5 * (data[i][2][2] - data[i][2][0]);
         data[i][3] = [];
-        data[i][3].push(data[i][2][0] - 1.5 * (data[i][2][2] - data[i][2][0]));
+        data[i][3].push(q1);
         data[i][3].push(d3.quantile(data[i][1], 0.5));
-        data[i][3].push(data[i][2][0] + 1.5 * (data[i][2][2] - data[i][2][0]));
+        data[i][3].push(q3);
+
+        data[i][4] = [];
+        for (var j = 0; j < data[i][1].length; j++) {
+            if (data[i][1][j] < q1 || data[i][1][j] > q3)
+                data[i][4].push(data[i][1][j]);
+        }
     }
+
     console.log(data);
+    return data;
+}
 
-    // axis
-    var x_scale = d3.scaleLinear()
-					.domain([-0.5, 3.5])
-                    .range([padding, width-padding]);
-                    
-	var x_axis = d3.axisTop()
-                    .scale(x_scale)
-                    .tickValues(data.map(function(d, i) { return i; }))
-                    .tickFormat(function(d) { return data[d][0]; });
-                    
-    canvas.append("g")
-            .attr('class', 'x-axis')
-            .attr("transform", "translate(0, " + padding + ")")
-            .call(x_axis);
-
-    var y_scale = d3.scaleLinear()
-            .domain([max, min])
-            .range([0 + padding, height - padding]);
-            
-    var y_axis = d3.axisLeft()
-            .scale(y_scale);
-
-    canvas.append("g")
-			.attr('class', 'y-axis')
-			.attr("transform", "translate(" + padding + ",0)")
-            .call(y_axis);
-            
-    canvas.append('text')
-			.attr('x', -(height/2))
-			.attr('y', padding/2)
-			.attr('text-anchor', 'middle')
-            .attr('font-size', 14)
-            .attr('transform', 'rotate(-90)')
-            .text('Round Score');
+function plotRounds(csv, tournament) {
+    var data = formatData(csv, tournament);
 
     // center line of box plot
+    canvas.selectAll('line.box-center').remove();
+    canvas.selectAll('rect.box').remove();
+    canvas.selectAll('line.box-bounds').remove();
+    canvas.selectAll('circle.outlier').remove();
+
     canvas.selectAll('line.box-center')
             .data(data)
             .enter()
@@ -141,63 +199,36 @@ async function main() {
     }
 
     canvas.selectAll('line.box-bounds')
-            .data(bounds)
+        .data(bounds)
+        .enter()
+        .append('line')
+        .attr('class', 'box-bounds')
+        .attr('stroke', 'black')
+        .attr('stroke-width', function(d) { return d[0][2]; })
+        .attr('x1', function(d) { return d[0][0]; })
+        .attr('y1', function(d) { return d[0][1]; })
+        .attr('x2', function(d) { return d[1][0]; })
+        .attr('y2', function(d) { return d[1][1]; });
+
+    //outliers
+    var outliers = [];
+    for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < 3; j++) {
+            outliers.push([i, data[i][4][j]]);
+        }
+    }
+
+    canvas.selectAll('circle.outlier')
+            .data(outliers)
             .enter()
-            .append('line')
-            .attr('class', 'box-bounds')
-            .attr('stroke', 'black')
-            .attr('stroke-width', function(d) { return d[0][2]; })
-            .attr('x1', function(d) { return d[0][0]; })
-            .attr('y1', function(d) { return d[0][1]; })
-            .attr('x2', function(d) { return d[1][0]; })
-            .attr('y2', function(d) { return d[1][1]; })
+            .append('circle')
+            .attr('class', 'outlier')
+            .attr('cx', function(d) { return x_scale(d[0]); })
+            .attr('cy', function(d) { return y_scale(d[1]); })
+            .attr('r', 2)
+            .attr('fill', 'white')
+            .attr('stroke', 'black');
 
-    // canvas.selectAll('line.box-min-line')
-    //         .data(data)
-    //         .enter()
-    //         .append('line')
-    //         .attr('class', 'box-min-line')
-    //         .attr('x1', function(d,i) { return x_scale(i) - (box_width / 2); })
-    //         .attr('x2', function(d,i) { return x_scale(i) + (box_width / 2); })
-    //         .attr('y1', function(d,i) { return y_scale(data[i][3][0]); })
-    //         .attr('y2', function(d,i) { return y_scale(data[i][3][0]); })
-    //         .attr('stroke', 'black');
-
-    // canvas.selectAll('line.box-med-line')
-    //         .data(data)
-    //         .enter()
-    //         .append('line')
-    //         .attr('class', 'box-med-line')
-    //         .attr('x1', function(d,i) { return x_scale(i) - (box_width / 2); })
-    //         .attr('x2', function(d,i) { return x_scale(i) + (box_width / 2); })
-    //         .attr('y1', function(d,i) { return y_scale(data[i][3][1]); })
-    //         .attr('y2', function(d,i) { return y_scale(data[i][3][1]); })
-    //         .attr('stroke', 'black')
-    //         .attr('stroke-width', 2);
-
-    // canvas.selectAll('line.box-max-line')
-    //         .data(data)
-    //         .enter()
-    //         .append('line')
-    //         .attr('class', 'box-max-lines')
-    //         .attr('x1', function(d,i) { return x_scale(i) - (box_width / 2); })
-    //         .attr('x2', function(d,i) { return x_scale(i) + (box_width / 2); })
-    //         .attr('y1', function(d,i) { return y_scale(data[i][3][2]); })
-    //         .attr('y2', function(d,i) { return y_scale(data[i][3][2]); })
-    //         .attr('stroke', 'black');
-}; 
-
-// function iqr(k) {
-//     return function(d, i) {
-//         var q1 = d.quartiles[0];
-//         var q3 = d.quartiles[2];
-//         var iqr = (q3 - q1) * k;
-//         i = -1;
-//         j = d.length;
-//         while (d[++i] < q1 - iqr);
-//         while (d[--j] > q3 + iqr);
-//         return [i,j];
-//     };
-// }
+}
 
 main();

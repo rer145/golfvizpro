@@ -4,3 +4,13 @@
 svg {
     border: 1px solid #ccc;
 }
+
+section.viz {
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    padding: 20px 0;
+}
+
+#plot {
+    text-align: center;
+}
