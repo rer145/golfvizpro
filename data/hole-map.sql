@@ -5,3 +5,5 @@ where
 	[Course #] = 11 and [Permanent Tournament #] = 11
 	and [Hole] = 17
 order by [From Location(Scorer)]
+
+select distinct [From Location(Scorer)] from Stroke

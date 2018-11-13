@@ -18,10 +18,12 @@
             <p>
               <strong>Tournament: </strong><br />
               <span id="tournament-list"></span>
+              The PLAYERS Championship - TPC Sawgrass
             </p>
             <p>
               <strong>Hole #: </strong><br />
               <span id="hole-list"></span>
+              17
             </p>
             <div id="plot"></div>
           </section>

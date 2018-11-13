@@ -13,7 +13,7 @@ var y_scale, y_axis;
 async function main() {
     var csv = await d3.csv('data/hole-map-sawgrass17.csv');
     csv = csv.map(d => ({
-        location: d['From Location(Scorer)'],
+        location: d['To Location(Scorer)'],
         x: parseFloat(d['X Coordinate']),
         y: parseFloat(d['Y Coordinate'])
     }));
@@ -70,30 +70,27 @@ function plot(csv, tournament) {
             .attr('r', 3)
             .style('fill', function(d) {
                 switch (d.location) {
-                    case 'Fairway':
-                        return '#546A3B';
-                    case 'Fairway Bunker':
-                        return '#E6DAC0';
-                    case 'Fringe':
-                        return '#4C6430';
-                    case 'Green':
-                        return 'green';//'#607846';
-                    case 'Green Side Bunker':
-                        return '#E6DAC0';
-                    case 'Intermediate Rough':
-                        return '#3D5325';
-                    case 'Native Area':
-                        return '#39441F';
-                    case 'Other':
-                        return '#4E372F';
-                    case 'Primary Rough':
-                        return '#485129';
-                    case 'Tee Box':
-                        return '#677F4B';
-                    case 'Unknown':
-                        return '#BCB9B4';
-                    case 'Water':
-                        return '#485FA2';
+                    case 'Bridge': return '#BCB9B4';
+                    case 'Bush': return '#BCB9B4';
+                    case 'Cart Path': return '#4E372F';
+                    case 'Dirt Outline': return '#39441F';
+                    case 'Fairway': return '#546A3B';
+                    case 'Fairway Bunker': return '#E6DAC0';
+                    case 'Fringe': return '#4C6430';
+                    case 'Green': return 'green';//'#607846';
+                    case 'Green Side Bunker': return '#E6DAC0';
+                    case 'Intermediate Rough': return '#3D5325';
+                    case 'Landscaping': return '#BCB9B4';
+                    case 'Native Area': return '#39441F';
+                    case 'Other': return '#4E372F';
+                    case 'Path': return '#4E372F';
+                    case 'Primary Rough': return '#485129';
+                    case 'Rock Outline': return '#4E372F';
+                    case 'Tee Box': return '#677F4B';
+                    case 'Tree Outline': return '#BCB9B4';
+                    case 'Unknown': return 'black';
+                    case 'Wall': return '#4E372F';
+                    case 'Water': return '#485FA2';
                     default:
                         return '#000000'
                 };
