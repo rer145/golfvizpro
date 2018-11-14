@@ -28,25 +28,25 @@ async function main() {
                 .domain([global_x_min, global_x_max])
                 .range([padding, width-padding]);
 
-    x_axis = d3.axisBottom()
-            .scale(x_scale);
+    // x_axis = d3.axisBottom()
+    //         .scale(x_scale);
 
-    canvas.append("g")
-        .attr('class', 'x-axis')
-        .attr("transform", "translate(0, " + (height - padding) + ")")
-        .call(x_axis);
+    // canvas.append("g")
+    //     .attr('class', 'x-axis')
+    //     .attr("transform", "translate(0, " + (height - padding) + ")")
+    //     .call(x_axis);
 
     y_scale = d3.scaleLinear()
                 .domain([global_y_max, global_y_min])
                 .range([0 + padding, height - padding]);
 
-    y_axis = d3.axisLeft()
-                .scale(y_scale);
+    // y_axis = d3.axisLeft()
+    //             .scale(y_scale);
 
-    canvas.append("g")
-            .attr('class', 'y-axis')
-            .attr("transform", "translate(" + padding + ",0)")
-            .call(y_axis);
+    // canvas.append("g")
+    //         .attr('class', 'y-axis')
+    //         .attr("transform", "translate(" + padding + ",0)")
+    //         .call(y_axis);
 
     plot(csv, '');
 }; 

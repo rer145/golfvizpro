@@ -143,21 +143,35 @@ async function main() {
         console.log(playerIds[i] + ' - ' + colors(playerIds[i]));
     }
 
-    var shot_line_gen = d3.line();
-    var shot_lines = [];
-    for (var i = 0; i < data.length; i++) {
-        shot_lines.push(shot_line_gen([[0, height/2], [yardage_scale_x(data[i].distance), yardage_scale_y(data[i].side)]]));
-    }
+     var shot_line_gen = d3.line();
+    // var shot_lines = [];
+    // for (var i = 0; i < data.length; i++) {
+    //     shot_lines.push(shot_line_gen([[0, height/2], [yardage_scale_x(data[i].distance), yardage_scale_y(data[i].side)]]));
+    // }
 
-    canvas.selectAll('path.shot')
-            .data(data)
+    //create data object with x1, x2, y1, y2, and player id and feed that to path.shot
+    var shots = data.map(d => ({
+        playerId: d.playerId,
+        name_first_last: d.name_first_last,
+        x1: 0,
+        y1: height / 2,
+        x2: yardage_scale_x(d.distance), 
+        y2: yardage_scale_y(d.side)
+    }));
+    console.log(shots);
+
+    canvas.selectAll('line.shot')
+            .data(shots)
             .enter()
-            .append('path')
+            .append('line')
             .attr('class', 'shot')
             .attr('stroke', function(d) { return colors(d.playerId); })
             .attr('stroke-width', 2)
             .attr('data-legend', function(d) { return d.name_first_last; })
-            .attr('d', shot_lines);
+            .attr('x1', function(d) { return d.x1; })
+            .attr('x2', function(d) { return d.x2; })
+            .attr('y1', function(d) { return d.y1; })
+            .attr('y2', function(d) { return d.y2; });
     canvas.selectAll('circle.shot')
             .data(data)
             .enter()
@@ -171,7 +185,7 @@ async function main() {
             .attr('r', 2);
 
 
-    ///*
+    /*
     // legend
     var legendRectSize = 25;
     var legendSpacing = 5;
@@ -197,7 +211,7 @@ async function main() {
         .attr('x', legendRectSize + legendSpacing)
         .attr('y', legendRectSize - legendSpacing)
         .text(function(d) { return d; });
-    //*/
+    */
 }; 
 
 main();
