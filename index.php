@@ -27,7 +27,7 @@
 						</li>
 						<li>
 							<time datetime="2010-11-13 00:00:00 UTC">Nov 13</time>
-							<a href="hole-map.php"><s>Hole Map</s> (incomplete)</a>
+							<a href="hole-map.php">Hole Map</a>
 						</li>
 					</ol>
 				</section>

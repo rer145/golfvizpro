@@ -11,8 +11,9 @@ var x_scale, x_axis;
 var y_scale, y_axis;
 
 async function main() {
-    var csv = await d3.csv('data/hole-map-sawgrass17.csv');
+    var csv = await d3.csv('data/hole-map-sawgrass.csv');
     csv = csv.map(d => ({
+        hole: parseInt(d['Hole'], 10),
         location: d['To Location(Scorer)'],
         x: parseFloat(d['X Coordinate']),
         y: parseFloat(d['Y Coordinate'])
@@ -28,35 +29,39 @@ async function main() {
                 .domain([global_x_min, global_x_max])
                 .range([padding, width-padding]);
 
-    // x_axis = d3.axisBottom()
-    //         .scale(x_scale);
-
-    // canvas.append("g")
-    //     .attr('class', 'x-axis')
-    //     .attr("transform", "translate(0, " + (height - padding) + ")")
-    //     .call(x_axis);
-
     y_scale = d3.scaleLinear()
                 .domain([global_y_max, global_y_min])
                 .range([0 + padding, height - padding]);
 
-    // y_axis = d3.axisLeft()
-    //             .scale(y_scale);
+    d3.select("#holes")
+        .on('change', function() { plot(csv, '', this.value); });
 
-    // canvas.append("g")
-    //         .attr('class', 'y-axis')
-    //         .attr("transform", "translate(" + padding + ",0)")
-    //         .call(y_axis);
-
-    plot(csv, '');
+    plot(csv, '', 1);
 }; 
 
-function plot(csv, tournament) {
-    // var data = csv.filter(function(row) {
-    //     return row.tournament === tournament;
-    // });
+function plot(csv, tournament, hole) {
+    var data = csv.filter(function(row) {
+        //return row.tournament === tournament;
+        return row.hole == hole;
+    });
+    //var data = csv;
 
-    var data = csv;
+    d3.select('img#actual-hole')
+        .attr('src', 'images/holes/hole-' + hole + '.jpg');
+
+    var x_min = d3.min(data, function(d) { return d.x; });
+    var x_max = d3.max(data, function(d) { return d.x; });
+
+    var y_min = d3.min(data, function(d) { return d.y; });
+    var y_max = d3.max(data, function(d) { return d.y; });
+    
+    x_scale = d3.scaleLinear()
+                .domain([x_min, x_max])
+                .range([padding, width-padding]);
+
+    y_scale = d3.scaleLinear()
+                .domain([y_max, y_min])
+                .range([0 + padding, height - padding]);
 
     // scatterplot
     canvas.selectAll('circle.dot').remove();
